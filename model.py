@@ -1,3 +1,5 @@
+import math
+
 class Model():
     
     def __init__(self, db):
@@ -45,33 +47,55 @@ class Model():
         response_dict['messaggio'] = messaggio
         return response_dict
 
-    def get_ricette(self):
-        skip = 2
-        limit = 2
-        ricette_list = list()
+    def get_ricette(self, keyword='', categoria='', search_index=1):
+        limit = 5
+        
         _sql = "SELECT \
-                    ric.id_ricetta, ric.nome, ric.numero_rivista, ric.anno_rivista, ric.preferito, cat.nome, sez.nome \
+                    COUNT (ric.id_ricetta) \
                 FROM \
                     ricetta ric \
                         JOIN \
                     categoria cat USING(id_categoria) \
                         JOIN \
                     sezione sez USING(id_sezione)\
-                ORDER BY \
-                    ric.anno_rivista DESC, ric.numero_rivista DESC";#" \
-                #LIMIT (?), (?); "
+                WHERE \
+                    tags LIKE ? AND id_categoria like ? "
         cur = self.db.cursor()
-        for row in cur.execute(_sql):
+        cur.execute(_sql, ('%'+keyword+'%', '%'+categoria+'%'))
+        count = cur.fetchone()[0]
+        search_total = max(1, int( math.ceil( count / float(limit) ) ))
+        
+        # Trick: If I deleted the only record of a page, check for index
+        if count % limit == 0 and search_index > search_total: search_index -= 1
+        skip = (int(search_index)-1)*limit
+        
+        ricette_list = list()
+        _sql = "SELECT \
+                    ric.id_ricetta, ric.nome, ric.numero_rivista, ric.anno_rivista, ric.pagina, ric.preferito, cat.nome, sez.nome \
+                FROM \
+                    ricetta ric \
+                        JOIN \
+                    categoria cat USING(id_categoria) \
+                        JOIN \
+                    sezione sez USING(id_sezione)\
+                WHERE \
+                    tags LIKE ? AND id_categoria like ? \
+                ORDER BY \
+                    ric.anno_rivista DESC, ric.numero_rivista DESC, ric.pagina \
+                LIMIT (?), (?); "
+        for row in cur.execute(_sql, ('%'+keyword+'%', '%'+categoria+'%', skip, limit)):
             r = dict()
             r['id_ricetta'] = row[0]
             r['nome'] = row[1]
             r['numero_rivista'] = row[2]
             r['anno_rivista'] = row[3]
-            r['preferito'] = row[4]
-            r['categoria'] = row[5]
-            r['sezione'] = row[6]
+            r['pagina'] = row[4]
+            r['preferito'] = row[5]
+            r['categoria'] = row[6]
+            r['sezione'] = row[7]
             ricette_list.append(r)
-        return ricette_list
+        
+        return ricette_list, search_total, search_index
     
     def get_ricetta(self, id_ricetta):
         _sql = "SELECT \

@@ -9,15 +9,23 @@ class MainHandler(tornado.web.RequestHandler):
         self.db = self.application.db
 
     def get(self):
+        # Initializing cookie
+        self.set_cookie('keyword', '')
+        self.set_cookie('categoria', '')
+        self.set_cookie('search_index', '1')
         self.render("index.html")
     
     def post(self):
         azione = self.get_argument('azione', default='')
         _model = Model(self.db)        
         response_dict = dict()
+        keyword_cookie = self.get_cookie('keyword')
+        categoria_cookie = self.get_cookie('categoria')
+        search_index_cookie = int(self.get_cookie('search_index'))
         
         if azione == 'caricaContenuti':
-            ricette = _model.get_ricette()
+            ricette = dict()
+            ricette['list'], ricette['search_total'], ricette['search_index'] = _model.get_ricette(keyword_cookie, categoria_cookie, search_index_cookie)
             categorie = _model.get_categorie()
             sezioni = _model.get_sezioni()
             response_dict['ricette'] = ricette
@@ -25,8 +33,15 @@ class MainHandler(tornado.web.RequestHandler):
             response_dict['sezioni'] = sezioni
             self.write(tornado.escape.json_encode(response_dict))
         
-        elif azione == 'getRicette':
-            ricette = _model.get_ricette()
+        elif azione == 'searchRicette':
+            keyword_cookie = self.get_argument('keyword')
+            categoria_cookie = self.get_argument('categoria')
+            search_index_cookie = int(self.get_argument('searchIndex'))
+            self.set_cookie('keyword', keyword_cookie)
+            self.set_cookie('categoria', str(categoria_cookie))
+            self.set_cookie('search_index', str(search_index_cookie))
+            ricette = dict()
+            ricette['list'], ricette['search_total'], ricette['search_index'] = _model.get_ricette(keyword_cookie, categoria_cookie, search_index_cookie)
             response_dict['ricette'] = ricette
             self.write(tornado.escape.json_encode(response_dict))
         
@@ -39,14 +54,21 @@ class MainHandler(tornado.web.RequestHandler):
             _ric = tornado.escape.json_decode(self.get_argument('ricetta'))
             response_dict = _model.salva_ricetta(_ric)
             # Se tutto OK, ritorno le ricette per il reload
-            if response_dict['stato'] == 0: response_dict['ricette'] = _model.get_ricette()
+            if response_dict['stato'] == 0: 
+                ricette = dict()
+                ricette['list'], ricette['search_total'], ricette['search_index'] = _model.get_ricette(keyword_cookie, categoria_cookie, search_index_cookie)
+                response_dict['ricette'] = ricette
             self.write(tornado.escape.json_encode(response_dict))
         
         elif azione == 'deleteRicetta':
             id_ricetta = int(self.get_argument('id_ricetta'))
             response_dict = _model.delete_ricetta(id_ricetta)
             # Se tutto OK, ritorno le ricette per il reload
-            if response_dict['stato'] == 0: response_dict['ricette'] = _model.get_ricette()
+            if response_dict['stato'] == 0: 
+                ricette = dict()
+                ricette['list'], ricette['search_total'], ricette['search_index'] = _model.get_ricette(keyword_cookie, categoria_cookie, search_index_cookie)
+                self.set_cookie('search_index', str(ricette['search_index']))
+                response_dict['ricette'] = ricette
             self.write(tornado.escape.json_encode(response_dict))
         
         elif azione == 'salvaCategoria':

@@ -154,6 +154,31 @@ function deleteSezione(id_sezione) {
     }
 }
 
+/* RICERCA */
+function searchRicette() {
+    var keyword = $("#parola-chiave-filtra").val();
+    var categoria = $("#categoria-filtra").val();
+    $.post('/', {'azione': 'searchRicette', 'keyword': keyword, 'categoria': categoria, 'searchIndex': searchIndex}, function(response){
+        var response = JSON.parse(response);
+        makeTableRicette(response.ricette);
+    });
+}
+function resetSearchIndex() {
+    searchIndex = 1;
+}
+function next() {
+    if (searchIndex < searchTotal) {
+        searchIndex++;
+        searchRicette(searchIndex);
+    }
+}
+function prev() {
+    if (searchIndex > 1) {
+        searchIndex--;
+        searchRicette(searchIndex);
+    }
+}
+
 
 function refreshAll(){
     $.post('/', {'azione': 'caricaContenuti'}, function(response){
@@ -166,6 +191,8 @@ function refreshAll(){
 }
 
 $(document).ready(function(){
+
+    searchIndex = 1;
     
     refreshAll();
     

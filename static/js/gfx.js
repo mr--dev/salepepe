@@ -2,8 +2,8 @@ function showRicetta(id_ricetta) {
     $("#id-ricetta").val(id_ricetta);
     $("#main-div").hide("slide",{direction: 'up'});
     $("#scheda-ricetta-div").show("slide",{direction: 'down'});
-    _form.resetForm();
     checkRicettaForm();
+    _form.resetForm();
 }
 
 function hideRicetta() {
@@ -20,7 +20,7 @@ function clearRicetta() {
     checkRicettaForm();
 }
 function checkRicettaForm() {
-    if ( $("#ricetta-form").valid() ) {
+    if ( _form.checkForm() ) {
         $("#check-ricetta-form").removeClass('glyphicon-exclamation-sign').addClass('glyphicon-ok');
     } else {
         $("#check-ricetta-form").removeClass('glyphicon-ok').addClass('glyphicon-exclamation-sign');
@@ -28,14 +28,29 @@ function checkRicettaForm() {
 }
 
 function makeTableRicette(ricette) {
+    var mesi = {
+        '1': 'Gen',
+        '2': 'Feb',
+        '3': 'Mar',
+        '4': 'Apr',
+        '5': 'Mag',
+        '6': 'Giu',
+        '7': 'Lug',
+        '8': 'Ago',
+        '9': 'Set',
+        '10': 'Ott',
+        '11': 'Nov',
+        '12': 'Dic',
+    };
     var html = '';
-    for (ii=0; ii<ricette.length; ii++) {
-        var r = ricette[ii];
+    for (ii=0; ii<ricette.list.length; ii++) {
+        var r = ricette.list[ii];
         var htmlPreferito = r.preferito == 1 ? '<span class="glyphicon glyphicon-star-empty"></span>' : '';
         html += '<tr>'+
         '    <td>'+r.nome+'</td>'+
-        '    <td class="text-center">'+r.numero_rivista+'</td>'+
+        '    <td class="text-center">'+mesi[r.numero_rivista]+'</td>'+
         '    <td class="text-center">'+r.anno_rivista+'</td>'+
+        '    <td class="text-center">'+r.pagina+'</td>'+
         '    <td>'+r.categoria+'</td>'+
         '    <td>'+r.sezione+'</td>'+
         '    <td class="text-center">'+htmlPreferito+'</td>'+
@@ -48,6 +63,10 @@ function makeTableRicette(ricette) {
         '</tr>'
     }
     $("#ricette-table tbody").html(html);
+    searchTotal = ricette.search_total;
+    $("#search-total").text(ricette.search_total);
+    searchIndex = ricette.search_index;
+    $("#search-index").text(searchIndex);
 }
 
 function makeCategorie(categorie) {
