@@ -8,7 +8,11 @@ function salvaRicetta() {
     _ric.preferito = $("#preferito").is(":checked") ? 1 : 0;
     _ric.id_categoria = $("#categoria").val();
     _ric.id_sezione = $("#sezione").val();
-    console.log(_ric);
+    var tags = Array();
+    $("#tag span").each(function(ind, el){
+        tags.push(el.getAttribute('value'));
+    });
+    _ric.tags = tags.join("|");
     $.post('/', {'azione': 'salvaRicetta', 'ricetta': JSON.stringify(_ric)}, function(response){
         var response = JSON.parse(response);
         if (response.stato == 0) {
@@ -30,6 +34,12 @@ function editRicetta(id_ricetta) {
         $("#anno-rivista").val(r.anno_rivista);
         $("#pagina").val(r.pagina);
         if (r.preferito == 1) $("#preferito").attr('checked', 'checked');
+        var tags = r.tags.split('|');
+        if (tags.length != 0 && tags[0] != '') {
+            for (ii = 0; ii < tags.length; ii++) {
+                addLabelTag(tags[ii].trim());
+            }
+        }
         $("#categoria").val(r.id_categoria);
         $("#sezione").val(r.id_sezione);
         showRicetta(id_ricetta);
@@ -46,9 +56,16 @@ function deleteRicetta(id_ricetta) {
             }
             else
                 alert('Errore durante l\'eliminazione.');
-            console.log(response);
         });
     }
+}
+
+function addTag() {
+    var tags = $("#inserisci-tag").val().split(',');
+    for (ii = 0; ii < tags.length; ii++) {
+        addLabelTag(tags[ii].trim());
+    }
+    $("#inserisci-tag").val('');
 }
 
 /* CATEGORIE */
@@ -149,8 +166,6 @@ function refreshAll(){
 }
 
 $(document).ready(function(){
-
-    console.log("Pagina Caricata.");
     
     refreshAll();
     

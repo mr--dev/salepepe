@@ -7,12 +7,12 @@ class Model():
         response_dict = dict()
         if int(_ric['id_ricetta']) == 0:
             _rec = ( _ric['nome'], _ric['numero_rivista'], int(_ric['anno_rivista']), _ric['pagina'], _ric['preferito'], int(_ric['id_categoria']), 
-                    int(_ric['id_sezione']) )
-            _sql = "INSERT INTO ricetta(nome, numero_rivista, anno_rivista, pagina, preferito, id_categoria, id_sezione) values (?, ?, ?, ?, ?, ?, ?)"
+                    int(_ric['id_sezione']), _ric['tags'] )
+            _sql = "INSERT INTO ricetta(nome, numero_rivista, anno_rivista, pagina, preferito, id_categoria, id_sezione, tags) values (?, ?, ?, ?, ?, ?, ?, ?)"
         else: 
-            _rec = ( _ric['nome'], _ric['numero_rivista'], int(_ric['anno_rivista']), _ric['pagina'], _ric['preferito'], int(_ric['id_categoria']), 
+            _rec = ( _ric['nome'], _ric['numero_rivista'], int(_ric['anno_rivista']), _ric['pagina'], _ric['preferito'], _ric['tags'], int(_ric['id_categoria']), 
                     int(_ric['id_sezione']), int(_ric['id_ricetta']) )
-            _sql = "UPDATE ricetta SET nome = ?, numero_rivista = ?, anno_rivista = ?, pagina = ?, preferito = ?, id_categoria = ?, id_sezione = ? \
+            _sql = "UPDATE ricetta SET nome = ?, numero_rivista = ?, anno_rivista = ?, pagina = ?, preferito = ?, tags = ?, id_categoria = ?, id_sezione = ? \
                     WHERE id_ricetta = ?"
         try: 
             cur = self.db.cursor()
@@ -75,7 +75,7 @@ class Model():
     
     def get_ricetta(self, id_ricetta):
         _sql = "SELECT \
-                    ric.id_ricetta, ric.nome, ric.numero_rivista, ric.anno_rivista, ric.pagina, ric.preferito, ric.id_categoria, ric.id_sezione \
+                    ric.id_ricetta, ric.nome, ric.numero_rivista, ric.anno_rivista, ric.pagina, ric.preferito, ric.tags, ric.id_categoria, ric.id_sezione \
                 FROM \
                     ricetta ric \
                 WHERE \
@@ -90,8 +90,9 @@ class Model():
         r['anno_rivista'] = row[3]
         r['pagina'] = row[4]
         r['preferito'] = row[5]
-        r['id_categoria'] = row[6]
-        r['id_sezione'] = row[7]
+        r['tags'] = row[6]
+        r['id_categoria'] = row[7]
+        r['id_sezione'] = row[8]
         return r
 
     def salva_categoria(self, _cat):

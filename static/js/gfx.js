@@ -3,6 +3,7 @@ function showRicetta(id_ricetta) {
     $("#main-div").hide("slide",{direction: 'up'});
     $("#scheda-ricetta-div").show("slide",{direction: 'down'});
     _form.resetForm();
+    checkRicettaForm();
 }
 
 function hideRicetta() {
@@ -15,6 +16,7 @@ function clearRicetta() {
     $("#ricetta-form input").val('')
     $("#ricetta-form select").val('')
     $("#ricetta-form input[type=checkbox]").removeAttr('checked');
+    $("#tag span").remove();
     checkRicettaForm();
 }
 function checkRicettaForm() {
@@ -99,4 +101,12 @@ function hideImpostazioni() {
 function clearFiltri() {
     $("#parola-chiave-filtra").val('');
     $("#categoria-filtra").val('');
+}
+
+function addLabelTag(tagName) {
+    var htmlTag = '<span class="label label-danger cursor-pointer" onclick="javascript:removeTag(this);" value="'+tagName+'">'+tagName+' &times;</span> ';
+    $("#tag").append(htmlTag);
+}
+function removeTag(el) {
+    el.remove();
 }
