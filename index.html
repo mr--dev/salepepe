@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="">
+        <meta name="author" content="[M|R]">
+
+        <title>Sale e Pepe | Manager</title>
+
+        <!-- Bootstrap core CSS -->
+        <!--<link href="/static/css/bootstrap.css" rel="stylesheet">-->
+        <link href="/static/css/bootstrap-amelia.css" rel="stylesheet">
+        <link href="/static/css/style.css" rel="stylesheet">
+
+        <!-- Custom styles for this template -->
+        <style>
+            body {
+                min-height: 1000px;
+                padding-top: 70px;
+            }
+        </style>
+    </head>
+
+    <body>
+
+        <!-- Fixed navbar -->
+        <div class="navbar navbar-default navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="/">Sale e Pepe | Manager</a>
+                </div>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li><a class="cursor-pointer" onclick="javascript:showRicetta(0);">Aggiungi ricetta</a></li>
+                        <li><a class="cursor-pointer" onclick="javascript:showImpostazioni();">Impostazioni</a></li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                    <li><a href="#">dev by [M|R]</a></li>
+                    </ul>
+                </div><!--/.nav-collapse -->
+            </div>
+        </div>
+        
+        <!-- Impostazioni -->
+        <div class="container" id="impostazioni-div" style="display: none;">
+            <div class="well col-sm-offset-2 col-sm-8">
+                <div class="row">
+                    <!-- Categorie -->
+                    <div class="col-sm-6">
+                        <fieldset>
+                            <legend>Categorie</legend>
+                            <table class="table table-striped table-bordered table-hover" id="categorie-table">
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </fieldset>
+                        <hr/>
+                    </div><!-- /.Categorie -->
+                    
+                    <!-- Sezioni -->
+                    <div class="col-sm-6">
+                        <fieldset>
+                            <legend>Sezioni</legend>
+                            <table class="table table-striped table-bordered table-hover" id="sezioni-table">
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </fieldset>
+                        <hr/>
+                    </div><!-- /.Sezioni -->
+                </div>
+                
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="row">
+                            <div class="col-sm-8">
+                                <input type="hidden" id="id-categoria" value="0">
+                                <input type="text" class="form-control" id="impostazioni-categorie" />
+                            </div>
+                            <div class="col-sm-2">
+                                <button type="button" class="btn btn-primary" onclick="javascript:salvaCategoria();">
+                                    <span class="glyphicon glyphicon-ok"></span>
+                                </button>
+                            </div>
+                            <div class="col-sm-2">
+                                <button type="button" class="btn btn-default" onclick="javascript:annullaCategoria();">
+                                    <span class="glyphicon glyphicon-remove"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="row">
+                            <div class="col-sm-8">
+                                <input type="hidden" id="id-sezione" value="0">
+                                <input type="text" class="form-control" id="impostazioni-sezioni" />
+                            </div>
+                            <div class="col-sm-2">
+                                <button type="button" class="btn btn-primary" onclick="javascript:salvaSezione();">
+                                    <span class="glyphicon glyphicon-ok"></span>
+                                </button>
+                            </div>
+                            <div class="col-sm-2">
+                                <button type="button" class="btn btn-default" onclick="javascript:annullaSezione();">
+                                    <span class="glyphicon glyphicon-remove"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row"><br/>
+                    <div class="col-sm-offset-10 col-sm-2">
+                        <button type="button" class="btn btn-default col-sm-12" onclick="javascript:hideImpostazioni();">Chiudi</button>
+                    </div>
+                </div>
+            </div>
+        </div><!-- /.Impostazioni -->
+
+
+        <div class="container" id="main-div">
+        
+            <!-- Form ricerca -->
+            <div class="well well-sm">
+                <form class="form-horizontal">
+                    <div class="form-group" style="margin-bottom: 0px;">
+                        <label for="parola-chiave-filtra" class="control-label col-sm-1">Parola chiave:</label>
+                        <div class="col-sm-3">
+                            <input type="text" class="form-control" id="parola-chiave-filtra" name="parola-chiave-filtra"
+                                placeholder="Inserisci" />
+                        </div>
+                        <label for="categoria-filtra" class="control-label col-sm-1">Categoria:</label>
+                        <div class="col-sm-3">
+                            <select id="categoria-filtra" name="categoria-filtra" class="form-control col-sm-3">
+                            </select>
+                        </div>
+                        <div class="col-sm-2">
+                            <button type="button" class="btn btn-info col-sm-12">
+                                <span class="glyphicon glyphicon-search"></span> Cerca
+                            </button>
+                        </div>
+                        <div class="col-sm-2">
+                            <button type="button" class="btn btn-info col-sm-12" onclick="javascript:clearFiltri();">
+                                <span class="glyphicon glyphicon-refresh"></span> Pulisci
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div><!-- /.Form Ricerca -->
+            
+            <!-- Tabella risultati -->
+            <table class="table table-striped table-bordered table-hover" id="ricette-table">
+                <thead>
+                    <tr class="danger" style="width: 100%">
+                        <th style="width: 35%">Ricetta</th>
+                        <th style="width: 5%">Numero</th>
+                        <th style="width: 5%">Anno</th>
+                        <th style="width: 20%">Categoria</th>
+                        <th style="width: 20%">Sezione</th>
+                        <th style="width: 5%">&nbsp;</th>
+                        <th style="width: 5%">&nbsp;</th>
+                        <th style="width: 5%">&nbsp;</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+
+            <!-- Paginatore -->
+            <ul class="pager">
+                <li><a href="#">&larr; Prec.</a></li>
+                <li><span class="label label-info">Pag. 1 di 23</span></li>
+                <li><a href="#">Succ. &rarr;</a></li>
+            </ul><!-- /.Paginatore -->
+            
+        </div> <!-- /container -->
+    
+        <div class="container" id="scheda-ricetta-div" style="display: none;">
+            <div class="well col-sm-offset-2 col-sm-8">
+                <form class="bs-example form-horizontal" id="ricetta-form" action="javascript:salvaRicetta()">
+                    <input type="hidden" id="id-ricetta" name="id-ricetta">
+                    <fieldset>
+                        <legend>Scheda ricetta 
+                            <span id="check-ricetta-form" class="glyphicon glyphicon-exclamation-sign pull-right"></span>
+                        </legend>
+                        <div class="form-group">
+                            <label for="ricetta" class="col-lg-2 control-label">Ricetta</label>
+                            <div class="col-lg-10">
+                                <input type="text" class="form-control" id="ricetta" name="ricetta" >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="numero" class="col-lg-2 control-label">Numero</label>
+                            <div class="col-lg-4">
+                                <input type="text" class="form-control" id="numero-rivista" name="numero-rivista" >
+                            </div>
+                            <label for="anno" class="col-lg-2 control-label">Anno</label>
+                            <div class="col-lg-4">
+                                <input type="text" class="form-control" id="anno-rivista" name="anno-rivista" >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="pagina" class="col-lg-2 control-label">Pagina</label>
+                            <div class="col-lg-4">
+                                <input type="text" class="form-control" id="pagina" name="pagina" >
+                            </div>
+                            <div class="col-lg-offset-2 col-lg-4">
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" id="preferito" name="preferito"> 
+                                            Preferito <span class="glyphicon glyphicon-star-empty"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="categoria" class="col-lg-2 control-label">Categoria:</label>
+                            <div class="col-lg-4">
+                                <select class="form-control" id="categoria" name="categoria">
+                                    <option value="">Seleziona</option>
+                                    <option value="1">Primi</option>
+                                    <option>Secondi</option>
+                                </select>
+                            </div>
+                            <label for="sezione" class="col-lg-2 control-label">Sezione:</label>
+                            <div class="col-lg-4">
+                                <select class="form-control" id="sezione" name="sezione">
+                                </select>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="form-group">
+                            <div class="col-lg-10 col-lg-offset-2">
+                                <button class="btn btn-default" onclick="javascript:hideRicetta();">Annulla</button> 
+                                <button type="submit" class="btn btn-primary">Salva</button> 
+                            </div>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+
+        <!-- Bootstrap core JavaScript
+        ================================================== -->
+        <!-- Placed at the end of the document so the pages load faster -->
+        <script src="/static/js/jquery-1.10.2.js"></script>
+        <script src="/static/js/jquery.validate.js"></script>
+        <script src="/static/js/jquery-ui-1.10.3.js"></script>
+        <script src="/static/js/bootstrap.min.js"></script>
+        <script src="/static/js/core.js"></script>
+        <script src="/static/js/gfx.js"></script>
+    </body>
+</html>
+

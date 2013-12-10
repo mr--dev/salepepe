@@ -1,0 +1,3 @@
+label.error { display: none !important; }
+input.error, select.error { border-color: red !important; }
+.cursor-pointer { cursor: pointer; }
