@@ -33,7 +33,7 @@ function editRicetta(id_ricetta) {
         $("#numero-rivista").val(r.numero_rivista);
         $("#anno-rivista").val(r.anno_rivista);
         $("#pagina").val(r.pagina);
-        if (r.preferito == 1) $("#preferito").attr('checked', 'checked');
+        if (r.preferito == 1) $("#preferito").prop('checked', true);
         var tags = r.tags.split('|');
         if (tags.length != 0 && tags[0] != '') {
             for (ii = 0; ii < tags.length; ii++) {

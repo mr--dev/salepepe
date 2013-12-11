@@ -59,9 +59,9 @@ class Model():
                         JOIN \
                     sezione sez USING(id_sezione)\
                 WHERE \
-                    tags LIKE ? AND id_categoria like ? "
+                    (ric.nome like ? OR tags LIKE ?) AND id_categoria like ? "
         cur = self.db.cursor()
-        cur.execute(_sql, ('%'+keyword+'%', '%'+categoria+'%'))
+        cur.execute(_sql, ('%'+keyword+'%', '%'+keyword+'%', '%'+categoria+'%'))
         count = cur.fetchone()[0]
         search_total = max(1, int( math.ceil( count / float(limit) ) ))
         
@@ -79,11 +79,11 @@ class Model():
                         JOIN \
                     sezione sez USING(id_sezione)\
                 WHERE \
-                    tags LIKE ? AND id_categoria like ? \
+                    (ric.nome like ? OR tags LIKE ?) AND id_categoria like ? \
                 ORDER BY \
                     ric.anno_rivista DESC, ric.numero_rivista DESC, ric.pagina \
                 LIMIT (?), (?); "
-        for row in cur.execute(_sql, ('%'+keyword+'%', '%'+categoria+'%', skip, limit)):
+        for row in cur.execute(_sql, ('%'+keyword+'%', '%'+keyword+'%', '%'+categoria+'%', skip, limit)):
             r = dict()
             r['id_ricetta'] = row[0]
             r['nome'] = row[1]

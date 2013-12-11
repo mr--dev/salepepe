@@ -15,7 +15,7 @@ function hideRicetta() {
 function clearRicetta() {
     $("#ricetta-form input").val('')
     $("#ricetta-form select").val('')
-    $("#ricetta-form input[type=checkbox]").removeAttr('checked');
+    $("#ricetta-form input[type=checkbox]").prop('checked', false);
     $("#tag span").remove();
     checkRicettaForm();
 }
