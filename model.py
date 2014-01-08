@@ -1,4 +1,5 @@
 import math
+import config
 
 class Model():
     
@@ -48,7 +49,7 @@ class Model():
         return response_dict
 
     def get_ricette(self, keyword='', categoria='', search_index=1):
-        limit = 5
+        limit = config.pagination
         
         _sql = "SELECT \
                     COUNT (ric.id_ricetta) \

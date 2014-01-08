@@ -1,4 +1,5 @@
 function salvaRicetta() {
+    $("#loading-page").show();
     var _ric = {}
     _ric.id_ricetta = $("#id-ricetta").val();
     _ric.nome = $("#ricetta").val();
@@ -17,14 +18,18 @@ function salvaRicetta() {
         var response = JSON.parse(response);
         if (response.stato == 0) {
             makeTableRicette(response.ricette);
+            $("#loading-page").hide();
             hideRicetta();
         }
-        else
+        else {
+            $("#loading-page").hide();
             alert('Errore durante il salvataggio.');
+        }
     })
 }
 
 function editRicetta(id_ricetta) {
+    $("#loading-page").show();
     $.post('/', {'azione': 'editRicetta', 'id_ricetta': id_ricetta}, function(response){
         var response = JSON.parse(response);
         var r = response.ricetta;
@@ -42,6 +47,7 @@ function editRicetta(id_ricetta) {
         }
         $("#categoria").val(r.id_categoria);
         $("#sezione").val(r.id_sezione);
+        $("#loading-page").hide();
         showRicetta(id_ricetta);
     })
 }
@@ -49,8 +55,10 @@ function editRicetta(id_ricetta) {
 function deleteRicetta(id_ricetta) {
     result = confirm('Sei sicuro di voler eliminare questa ricetta?');
     if (result) {
+        $("#loading-page").show();
         $.post('/', {'azione': 'deleteRicetta', 'id_ricetta': id_ricetta}, function(response){
             var response = JSON.parse(response);
+            $("#loading-page").hide();
             if (response.stato == 0) {
                 makeTableRicette(response.ricette);
             }
@@ -86,8 +94,10 @@ function salvaCategoria() {
     if (_cat.nome == '') {
         alert('Inserire il nome della categoria.');
     } else {
+        $("#loading-page").show();
         $.post('/', {'azione': 'salvaCategoria', 'categoria': JSON.stringify(_cat)}, function(response){
             var response = JSON.parse(response);
+            $("#loading-page").hide();
             if (response.stato == 0) {
                 annullaCategoria();
                 refreshAll();
@@ -100,8 +110,10 @@ function salvaCategoria() {
 function deleteCategoria(id_categoria) {
     result = confirm('Sei sicuro di voler eliminare questa categoria?');
     if (result) {
+        $("#loading-page").show();
         $.post('/', {'azione': 'deleteCategoria', 'id_categoria': id_categoria}, function(response){
             var response = JSON.parse(response);
+              $("#loading-page").hide();
             if (response.stato == 0) {
                 makeCategorie(response.categorie);
             }
@@ -129,8 +141,10 @@ function salvaSezione() {
     if (_sez.nome == '') {
         alert('Inserire il nome della sezione.');
     } else {
+        $("#loading-page").show();
         $.post('/', {'azione': 'salvaSezione', 'sezione': JSON.stringify(_sez)}, function(response){
             var response = JSON.parse(response);
+            $("#loading-page").hide();
             if (response.stato == 0) {
                 annullaSezione();
                 refreshAll();
@@ -143,8 +157,10 @@ function salvaSezione() {
 function deleteSezione(id_sezione) {
     result = confirm('Sei sicuro di voler eliminare questa sezione?');
     if (result) {
+        $("#loading-page").show();
         $.post('/', {'azione': 'deleteSezione', 'id_sezione': id_sezione}, function(response){
             var response = JSON.parse(response);
+            $("#loading-page").hide();
             if (response.stato == 0) {
                 makeSezioni(response.sezioni);
             }
@@ -158,9 +174,11 @@ function deleteSezione(id_sezione) {
 function searchRicette() {
     var keyword = $("#parola-chiave-filtra").val();
     var categoria = $("#categoria-filtra").val();
+    $("#loading-page").show();
     $.post('/', {'azione': 'searchRicette', 'keyword': keyword, 'categoria': categoria, 'searchIndex': searchIndex}, function(response){
         var response = JSON.parse(response);
         makeTableRicette(response.ricette);
+        $("#loading-page").hide();
     });
 }
 function resetSearchIndex() {
@@ -181,16 +199,19 @@ function prev() {
 
 
 function refreshAll(){
+    $("#loading-page").show();
     $.post('/', {'azione': 'caricaContenuti'}, function(response){
         var response = JSON.parse(response);
         makeTableRicette(response.ricette);
         makeCategorie(response.categorie);
         makeSezioni(response.sezioni);
-        // TODO: hide loading page;
+        $("#loading-page").hide();
     });
 }
 
 $(document).ready(function(){
+  
+    $("#loading-page").show();
 
     searchIndex = 1;
     
