@@ -1,6 +1,7 @@
 import os
 
 # APP
+db = 'salepepe.db'
 port = 8888
 pagination = 10
 

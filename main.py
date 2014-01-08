@@ -109,6 +109,6 @@ application = tornado.web.Application([
 """ MAIN """
 if __name__ == "__main__":
     application.listen(config.port)
-    application.db = sqlite3.connect('salepepe.db')
+    application.db = sqlite3.connect(config.db)
     tornado.ioloop.IOLoop.instance().start()
     tornado.autoreload.wait()
